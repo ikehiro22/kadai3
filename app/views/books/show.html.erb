@@ -10,47 +10,62 @@
         </div>
         <div class="col-xs-9">
             <h1>Book detail</h1>
-                <%= link_to @booked.user.name, user_path(@booked.user.id) %>
-                <%= link_to @booked.title, book_path(@booked.id) %>
-                <%= @booked.body %>
-                <% if @booked.favorited_by?(current_user) %>
+            <table>
+                <tr>
+                <th><%= link_to @booked.user.name, user_path(@booked.user.id) %></th>
+                <th><%= link_to @booked.title, book_path(@booked.id) %></th>
+                <th><%= @booked.body %></th>
+                <th>
+                    <% if @booked.favorited_by?(current_user) %>
                         <p>
                           <%= link_to book_favorites_path(@booked), method: :delete do %>
                             ♥<%= @booked.favorites.count %> いいね
                           <% end %>
                         </p>
-                <% else %>
+                    <% else %>
                         <p>
                           <%= link_to book_favorites_path(@booked), method: :post do %>
                             ♡<%= @booked.favorites.count %> いいね
                           <% end %>
                         </p>
+                     <% end %>
+                </th>
+                 <% if @booked.user.id == current_user.id %>
+                 <div class="Q">
+                     <th><%= link_to "Edit", edit_book_path(@booked.id), class: "btn btn-success" %></th>
+                 </div>
+                <th><%= link_to "Destroy", book_path(@booked.id), method: :delete,  "data-confirm" => "honntooooooooooonisakuzyoshimasukaaaa?", class: "btn btn-danger" %></th>
                 <% end %>
-                <% if @booked.user.id == current_user.id %>
-                    <%= link_to "Edit", edit_book_path(@booked.id), class: "btn btn-success" %>
-                    <%= link_to "Destroy", book_path(@booked.id), method: :delete,  "data-confirm" => "honntoooooooooooooooooooooooooooooooooooooonisakuzyoshimasukaaaa?", class: "btn btn-danger" %>
-                <% end %>
-                <div class="comments">
-                    <p>コメント件数：<%= @booked.book_comments.count %></p>
-                    <% @booked.book_comments.each do |book_comment| %>
-                      <p><%#= image_tag('sample-author1.jpg') %></p>
-                      <%= book_comment.user.name %>
-                      <%= book_comment.created_at.strftime('%Y/%m/%d') %><%= book_comment.comment %>
-                      <% if book_comment.user == current_user %>
+             </tr>
+            </table>
+            <table>
+              <div class="comments">
+                <p>コメント件数：<%= @booked.book_comments.count %></p>
+                <% @booked.book_comments.each do |book_comment| %>
+                <tr>
+                    <td><%= book_comment.user.name %></td>
+                    <td><%= book_comment.created_at.strftime('%Y/%m/%d') %><%= book_comment.comment %></td>
+                    <td>
+                        <% if book_comment.user == current_user %>
                               <div class="comment-delete">
                                 <%= link_to "削除", book_book_comment_path(book_comment.book, book_comment), method: :delete %>
                               </div>
-                      <% end %>
+                       <% end %>
+                    <br></td>
+                    
+                </tr>
+                <% end %>
+              </div>
+            </table>    
+                
+                 
                       
+                    <div class="new-comment">
+                        <%= form_with(model:[@booked, @book_comment], local: true) do |f| %>
+                          <%= f.text_area :comment, rows:'5',placeholder: "コメントをここに" %>
+                          <%= f.submit "Create Book comment", class:"btn btn-success" %>
+                        <% end %>
                     </div>
-                    <% end %>
-                 </div>
-                <div class="new-comment">
-                    <%= form_with(model:[@booked, @book_comment], local: true) do |f| %>
-                      <%= f.text_area :comment, rows:'5',placeholder: "コメントをここに" %>
-                      <%= f.submit "Create Book comment", class:"btn btn-success" %>
-                    <% end %>
-                </div>
         </div>
     </div>
 </div>
